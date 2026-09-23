@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FAQ — Winston Cronenwett</title>
+<meta name="description" content="How winstoncronenwett.com is built, hosted, secured, and deployed: Rocky Linux, Caddy, SELinux, firewalld, Cloudflare DNS, and a Git-based deploy.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌘</text></svg>">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="sitebar">
+    <a class="home" href="../">Winston Cronenwett</a>
+    <nav aria-label="Site">
+      <ul>
+        <li><a href="../about/">About me</a></li>
+        <li><a href="./" aria-current="page">FAQ</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <header class="masthead">
+    <h1>How this site runs</h1>
+    <p class="standfirst">This site is served from a server I provisioned, hardened, and maintain myself. Here is how it is put together, and what I learned putting it together.</p>
+    <ul class="toc">
+      <li><a href="#why-self-host">Why not use a website builder?</a></li>
+      <li><a href="#where">Where is it hosted?</a></li>
+      <li><a href="#why-rocky">Why Rocky Linux?</a></li>
+      <li><a href="#secured">How is the server secured?</a></li>
+      <li><a href="#https">How does HTTPS work?</a></li>
+      <li><a href="#dns">What's going on with DNS and email?</a></li>
+      <li><a href="#deploy">How do changes get deployed?</a></li>
+      <li><a href="#simple">Why is the site so plain?</a></li>
+      <li><a href="#went-wrong">What went wrong along the way?</a></li>
+      <li><a href="#failure">What happens if something breaks?</a></li>
+      <li><a href="#next">What's next?</a></li>
+      <li><a href="#source">Can I see the source?</a></li>
+    </ul>
+  </header>
+
+  <main class="faq prose">
+
+    <section id="background">
+      <h2>The basics</h2>
+
+      <h3 id="why-self-host">Why not use a website builder?</h3>
+      <p>Because a résumé can say I administer Linux servers, but a running server says it better. A hosted website builder would have produced a nicer-looking page in an afternoon and shown nothing about how I work. Building it this way means every layer, from DNS to the firewall to the web server, is something I chose, configured, and can explain.</p>
+      <p>It also keeps me honest. If the certificate lapses or a patch breaks something, there's no support team to call. That's the job I'm applying for, in miniature.</p>
+
+      <h3 id="where">Where is it hosted?</h3>
+      <p>On a single virtual private server at Akamai Cloud (formerly Linode). It's their smallest plan, one shared CPU and 1 GB of memory, which is plenty for a static site. Nothing about the hosting is managed: Akamai provides the virtual machine and a network firewall in front of it, and everything from the operating system up is mine to run.</p>
+
+      <h3 id="why-rocky">Why Rocky Linux?</h3>
+      <p>Rocky Linux is a free, community-built rebuild of Red Hat Enterprise Linux. I chose it because it behaves like the servers large organizations actually run: the same package manager (<code>dnf</code>), the same firewall (<code>firewalld</code>), and SELinux turned on by default. Practicing on something close to production is more useful than practicing on whatever is easiest.</p>
+      <p>The server runs Rocky Linux 10. Akamai's image is deliberately minimal, which meant installing a few things I'd normally take for granted, including the firewall itself.</p>
+    </section>
+
+    <section id="security">
+      <h2>Security</h2>
+
+      <h3 id="secured">How is the server secured?</h3>
+      <p>In layers, so that no single mistake leaves it exposed:</p>
+      <ul>
+        <li><strong>SSH</strong> accepts keys only. Password and keyboard-interactive login are off, root cannot log in directly, and only one named administrative account is allowed in. Those settings live in their own drop-in file rather than in the main SSH config, so a package update can't silently overwrite them.</li>
+        <li><strong>Two firewalls.</strong> Akamai's cloud firewall filters traffic before it ever reaches the server, allowing only SSH, HTTP, and HTTPS. On the server itself, <code>firewalld</code> enforces the same rules, with unneeded services such as the Cockpit admin console removed. If either layer is misconfigured, the other still holds.</li>
+        <li><strong>SELinux is enforcing.</strong> Every file and process carries a security label, and the kernel refuses access that the policy doesn't explicitly allow. Even if the web server were compromised, it could only read files labeled as web content. Plenty of tutorials tell you to turn SELinux off when it gets in the way; I'd rather learn to work with it.</li>
+        <li><strong>Automatic security patching</strong> through <code>dnf-automatic</code>, so security fixes land without waiting for me to log in.</li>
+      </ul>
+      <p>You'll notice I'm describing the design rather than publishing account names or exact configuration. The design is worth showing; the details are only useful to someone trying to get in.</p>
+
+      <h3 id="https">How does HTTPS work?</h3>
+      <p>The web server is <a href="https://caddyserver.com">Caddy</a>, which requests certificates from Let's Encrypt automatically and renews them before they expire. There's no cron job to forget about and no certificate files to copy around. The same configuration serves both the bare domain and the <code>www</code> address, and redirects plain HTTP to HTTPS.</p>
+      <p>For that to work, Let's Encrypt has to be able to reach this server directly to confirm I control the domain. That's why the DNS records point straight at the server instead of routing through Cloudflare's proxy. More on that below.</p>
+
+      <h3 id="dns">What's going on with DNS and email?</h3>
+      <p>The domain is registered with Cloudflare, which also hosts its DNS. The site is reachable over both IPv4 and IPv6, with the <code>www</code> name pointing at the main domain.</p>
+      <p>DNSSEC is turned on, which cryptographically signs the DNS records so a resolver can tell if someone has tampered with the answer on its way to you.</p>
+      <p>This domain doesn't send email, and I've said so publicly. Its SPF record authorizes no servers at all, and its DMARC policy tells receiving mail servers to reject anything claiming to come from it. That makes it much harder for someone to send phishing mail that appears to come from my name. It's a small thing that a lot of domains skip.</p>
+    </section>
+
+    <section id="operations">
+      <h2>Deploying and running it</h2>
+
+      <h3 id="deploy">How do changes get deployed?</h3>
+      <p>The site lives in a public Git repository on GitHub. The server keeps its own clone outside the web root, and a short deploy script does three things:</p>
+      <ul>
+        <li><code>git pull --ff-only</code> fetches the latest version, and refuses to proceed if the server's copy has somehow drifted from GitHub rather than quietly merging.</li>
+        <li><code>rsync --delete</code> mirrors the repository into the web root, so a file removed from the repository is removed from the site too. The <code>.git</code> directory is excluded so the repository's history is never served to the web.</li>
+        <li><code>restorecon</code> resets the SELinux labels on everything that was copied, so the web server is allowed to read it.</li>
+      </ul>
+      <p>That last step is there because I learned the hard way what happens without it.</p>
+
+      <h3 id="simple">Why is the site so plain?</h3>
+      <p>On purpose. It's three HTML pages and one stylesheet. There's no JavaScript, no framework, no web fonts, no analytics, no cookies, and no requests to any server but this one. It loads almost instantly, it works on any device, it adapts to your system's light or dark setting, and there's nothing in it that needs patching. The interesting part of this site is underneath it.</p>
+
+      <h3 id="went-wrong">What went wrong along the way?</h3>
+      <p>A few things, each of which taught me something:</p>
+      <ul>
+        <li><strong>SELinux silently blocked files I'd copied into place.</strong> Files copied into a directory can keep the wrong security label, and the service trying to read them just fails, often without an obvious error. It happened with my SSH keys and again with the website files. The fix is <code>restorecon</code>, and now it runs on every deploy.</li>
+        <li><strong>Cloudflare's proxy broke two things at once.</strong> With the proxy on, certificate issuance failed and I couldn't reach the server over SSH by its domain name, because the name now pointed at Cloudflare instead of at me. Turning the proxy off for these records fixed both. If I turn it back on later, I'll add a separate unproxied hostname for administration.</li>
+        <li><strong>The minimal image was more minimal than expected.</strong> Some commands I assumed would be there, including the firewall, weren't installed. <code>dnf provides</code> finds which package supplies a missing command.</li>
+        <li><strong>Docker and firewalld don't get along.</strong> Docker writes its own firewall rules that can bypass <code>firewalld</code> entirely, so a container port can end up exposed even when the firewall looks locked down. When I add containers to this server, I'll use Podman, which is native to Red Hat-family systems and doesn't need a privileged background daemon.</li>
+      </ul>
+
+      <h3 id="failure">What happens if something breaks?</h3>
+      <p>For a content problem, I can swap in a maintenance page in seconds. For anything worse, stopping the web server takes the site offline immediately while leaving the server reachable for me to fix it.</p>
+      <p>The honest gap right now is recovery. The site's content is safe in Git, so it can always be redeployed, but the server's configuration exists only on the server and in my notes. Closing that gap is the first item on the list below.</p>
+
+      <h3 id="next">What's next?</h3>
+      <ul>
+        <li><strong>An Ansible playbook</strong> that builds this entire server from a blank machine: packages, SSH hardening, firewall, SELinux, Caddy, and the deploy setup. The goal is to be able to destroy the server and have an identical one running in minutes.</li>
+        <li><strong>Push-to-deploy with GitHub Actions</strong>, so a change merged on GitHub goes live without me logging in.</li>
+        <li><strong>A live status page</strong> reading from self-hosted monitoring, so you can see the server's uptime for yourself.</li>
+        <li><strong>Off-server backups and external alerting</strong>, so I hear about an outage before anyone else does.</li>
+        <li><strong>A longer build log</strong> walking through each of these steps in more detail.</li>
+      </ul>
+
+      <h3 id="source">Can I see the source?</h3>
+      <p>Yes. Everything on this site is on <a href="https://github.com/winston-c">my GitHub</a>. As the automation above comes together, it'll land there too.</p>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Dayton, Ohio · <a href="mailto:wcronenwett@gmail.com">wcronenwett@gmail.com</a> · <a href="https://github.com/winston-c">Source on GitHub</a></p>
+  </footer>
+
+</div>
+</body>
+</html>
