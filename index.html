@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Winston Cronenwett — Systems Engineer</title>
+<meta name="description" content="Winston Cronenwett — systems and infrastructure engineer in Dayton, Ohio. Linux, virtualization, containers, and operations built on a business operations background.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌘</text></svg>">
+<style>
+  :root {
+    --paper:      #fbfcfd;
+    --ink:        #17222e;
+    --slate:      #55687a;
+    --rule:       #dde4ea;
+    --accent:     #13655f;
+    --accent-dim: #eaf1f0;
+    --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    --sans:  system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono:  ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:      #12181e;
+      --ink:        #e7edf2;
+      --slate:      #9aabb9;
+      --rule:       #27333d;
+      --accent:     #63c3b8;
+      --accent-dim: #1a262a;
+    }
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 47rem;
+    margin: 0 auto;
+    padding: 0 1.5rem 5rem;
+  }
+
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:hover { text-decoration-thickness: 2px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; letter-spacing: -0.01em; }
+
+  /* ---------- masthead ---------- */
+
+  header.masthead {
+    padding: 4.5rem 0 2.5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  h1 {
+    font-size: clamp(2.3rem, 6.5vw, 3.4rem);
+    line-height: 1.08;
+    margin: 0 0 1.1rem;
+  }
+
+  .standfirst {
+    font-size: 1.16rem;
+    color: var(--slate);
+    margin: 0 0 2rem;
+    max-width: 34rem;
+  }
+
+  .contact {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.75rem;
+    margin: 0;
+    padding: 0;
+    font-size: 0.97rem;
+  }
+
+  /* ---------- sections ---------- */
+
+  section { padding-top: 3.25rem; }
+
+  h2 {
+    font-size: 1.32rem;
+    margin: 0 0 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  p { margin: 0 0 1.05rem; }
+  p.lede { max-width: 38rem; }
+
+  /* ---------- career: year rail ---------- */
+
+  .entry {
+    display: grid;
+    grid-template-columns: 8.5rem 1fr;
+    gap: 0 1.75rem;
+    padding-bottom: 2.25rem;
+  }
+
+  .years {
+    font-family: var(--mono);
+    font-size: 0.83rem;
+    color: var(--slate);
+    padding-top: 0.42rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  h3 {
+    font-size: 1.07rem;
+    margin: 0 0 0.15rem;
+    line-height: 1.35;
+  }
+
+  .org {
+    color: var(--slate);
+    font-size: 0.95rem;
+    margin: 0 0 0.7rem;
+  }
+
+  .entry ul, .plain-list {
+    margin: 0;
+    padding-left: 1.05rem;
+  }
+
+  .entry li, .plain-list li { margin-bottom: 0.5rem; }
+
+  /* ---------- stack table ---------- */
+
+  .stack {
+    display: grid;
+    grid-template-columns: 9.5rem 1fr;
+    gap: 0.65rem 1.75rem;
+    font-size: 0.97rem;
+    margin: 0 0 1.5rem;
+  }
+
+  .stack dt {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--slate);
+    padding-top: 0.22rem;
+  }
+
+  .stack dd { margin: 0; }
+
+  .note {
+    background: var(--accent-dim);
+    border-left: 2px solid var(--accent);
+    padding: 1rem 1.15rem;
+    font-size: 0.95rem;
+  }
+
+  .note p:last-child { margin-bottom: 0; }
+
+  footer {
+    margin-top: 3.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.9rem;
+    color: var(--slate);
+  }
+
+  @media (max-width: 34rem) {
+    body { font-size: 16px; }
+    header.masthead { padding-top: 3rem; }
+    .entry, .stack { grid-template-columns: 1fr; gap: 0; }
+    .years { padding: 0 0 0.3rem; }
+    .stack dt { padding-top: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <h1>Winston Cronenwett</h1>
+    <p class="standfirst">Systems engineer in Dayton, Ohio. I keep Linux infrastructure running in higher education, and I came to it by way of running operations for small businesses.</p>
+    <ul class="contact">
+      <li><a href="mailto:wcronenwett@gmail.com">wcronenwett@gmail.com</a></li>
+      <li><a href="https://www.linkedin.com/in/winston-cronenwett-15758855">LinkedIn</a></li>
+    </ul>
+  </header>
+
+  <main>
+
+    <section id="about">
+      <h2>What I'm looking for</h2>
+      <p class="lede">A systems or infrastructure engineering role where I own servers end to end: provisioning, patching, monitoring, and the change management that keeps all of it boring in the best way. I work best where the technical problem is tangled up with a process problem, because I've spent most of my career on both sides of that line.</p>
+      <p class="lede">Higher education suits me. It has the constraints of a small business and the scale of an enterprise, and the work is in service of something I find worth doing.</p>
+    </section>
+
+    <section id="work">
+      <h2>Experience</h2>
+
+      <article class="entry">
+        <p class="years">2022 — present</p>
+        <div>
+          <h3>IT Systems Analyst</h3>
+          <p class="org">University of Dayton, Department of Student Development</p>
+          <ul>
+            <li>Led the implementation of the department's IT asset management system, from defining scope with stakeholders through the technical build. The work was recognized in the department's 2023 Impact Report.</li>
+            <li>Re-implemented that system on Linux and Docker, migrating it with no data loss and minimal downtime, on repurposed hardware. Performance and reliability both improved substantially.</li>
+            <li>Deployed a Kanban board application for the team, self-hosted to keep costs at zero.</li>
+            <li>Audited and reorganized the department's IT asset inventory, giving us real numbers to plan and budget against.</li>
+            <li>Cut the rate of misrouted support tickets by writing and circulating shared standards with neighboring departments, which meant less rework for my team and faster responses for our users.</li>
+            <li>Work with department staff on data retrieval and reporting across university systems, and enforce technology standards for security and data governance.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="entry">
+        <p class="years">2021 — 2022</p>
+        <div>
+          <h3>Client IT Support Engineer</h3>
+          <p class="org">Incito Solutions LLC, placed at The Modern College of Design</p>
+          <ul>
+            <li>First point of contact for incident response at a private college, supporting students, faculty, and staff daily.</li>
+            <li>Supported clients across higher education, finance, non-profit, medical, and manufacturing on network security, data recovery, and system configuration.</li>
+            <li>Administered Windows Server, Windows, and macOS fleets through RMM tooling, and handled technology onboarding and offboarding.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="entry">
+        <p class="years">2019 — 2021</p>
+        <div>
+          <h3>Proprietor</h3>
+          <p class="org">A Plus PC Doctor</p>
+          <ul>
+            <li>Ran my own IT support practice: on-site, remote, and phone support for local clients.</li>
+            <li>Diagnosed and repaired software, hardware, and configuration problems, from malware cleanup to motherboard replacement.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="entry">
+        <p class="years">2017 — 2019</p>
+        <div>
+          <h3>Operations and Strategic Planning Manager</h3>
+          <p class="org">DNA Computers LLC</p>
+          <ul>
+            <li>Built and documented the processes behind sales, service, and operations, using Kanban to drive continuous improvement. Reduced variability and improved margin in a capital-constrained business.</li>
+            <li>Launched a house-branded gaming desktop line and a set of upgrade service packages, both of which meaningfully grew revenue with minimal capital outlay.</li>
+            <li>Analyzed store-level performance data to find the opportunities worth pursuing, and recruited and trained the team that delivered them.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="entry">
+        <p class="years">2014 — 2015</p>
+        <div>
+          <h3>Operations Intern, Corporate</h3>
+          <p class="org">Speedway LLC</p>
+          <ul>
+            <li>Acted as assistant manager for a multi-million dollar store with up to 12 employees, managing inventory, P&amp;L, and new-hire coaching.</li>
+            <li>Ran a regional compliance initiative on age-restricted sales: over 600 checks across 40 stores in six months, with a sampling and reporting process I designed and delivered to senior corporate leadership.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="entry">
+        <p class="years">2009 — 2013</p>
+        <div>
+          <h3>Team Leader</h3>
+          <p class="org">DNA Computers LLC</p>
+          <ul>
+            <li>Led service and sales teams of up to four during peak seasons, and coached new hires on both.</li>
+            <li>Learned to solve hardware, software, and configuration problems for customers with very little money to spend, during the Great Recession.</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <section id="homelab">
+      <h2>The homelab</h2>
+      <p class="lede">I run a full virtualization environment at home, which is where I learn things before I need them at work. Hardware-level virtualization on Proxmox, containers on Docker, and a rotating set of services for productivity, monitoring, security, media, and games. Most of what I know about Linux administration started as something I broke here first.</p>
+    </section>
+
+    <section id="colophon">
+      <h2>How this site runs</h2>
+      <p class="lede">This page is served from a virtual private server I provisioned and hardened myself. Nothing here is managed hosting.</p>
+      <dl class="stack">
+        <dt>host</dt>
+        <dd>Akamai Cloud VPS, Rocky Linux 10</dd>
+        <dt>web</dt>
+        <dd>Caddy, with automatic certificate issuance and renewal from Let's Encrypt</dd>
+        <dt>network</dt>
+        <dd>Cloudflare DNS and registrar, DNSSEC enabled, SPF and DMARC set to reject</dd>
+        <dt>security</dt>
+        <dd>Key-only SSH with root login disabled, firewalld on the host behind a cloud firewall, SELinux enforcing, automatic security patching</dd>
+      </dl>
+      <div class="note">
+        <p>Next: moving the whole build into an Ansible playbook so the server can be rebuilt from scratch, then adding a live status page that reads from my own monitoring.</p>
+      </div>
+    </section>
+
+    <section id="education">
+      <h2>Education</h2>
+      <article class="entry">
+        <p class="years">2013 — 2017</p>
+        <div>
+          <h3>B.S. Business Administration, Operations Management</h3>
+          <p class="org">The Ohio State University, Max M. Fisher College of Business</p>
+        </div>
+      </article>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Dayton, Ohio · <a href="mailto:wcronenwett@gmail.com">wcronenwett@gmail.com</a></p>
+  </footer>
+
+</div>
+</body>
+</html>
